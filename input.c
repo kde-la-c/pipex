@@ -1,19 +1,22 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   pipex.c                                            :+:      :+:    :+:   */
+/*   input.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: kde-la-c <kde-la-c@student.42madrid.com>   +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2023/08/06 15:50:40 by kde-la-c          #+#    #+#             */
-/*   Updated: 2023/08/06 15:50:43 by kde-la-c         ###   ########.fr       */
+/*   Created: 2023/08/07 13:41:45 by kde-la-c          #+#    #+#             */
+/*   Updated: 2023/08/07 13:41:49 by kde-la-c         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "pipex.h"
 
-int	main(int argc, char **argv)
+void	read_args(int argc, char **argv)
 {
-	read_args(argc, argv);
-	return (0);
+	if (argc != 5)
+		print_error("invalid arguments");
+	if (access(argv[1], R_OK))
+		perror_exit(argv[1]);
+	fprintf(stdout, "%s\n", argv[1]);
 }

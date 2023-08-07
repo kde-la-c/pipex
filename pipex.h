@@ -15,4 +15,11 @@
 
 # include "libft/libft.h"
 
+// input
+void	read_args(int argc, char **argv);
+
+// output
+int		print_error(char *err);
+int		perror_exit(char *err);
+
 #endif
