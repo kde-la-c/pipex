@@ -19,3 +19,5 @@ dbg*
 *.dSYM
 
 pipex
+test
+ret
