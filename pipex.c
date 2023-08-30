@@ -36,8 +36,8 @@ int	main(int argc, char **argv)
 {
 	char	*str;
 	int		*fds;
-	char	*arg[] = {"*.c", NULL};
-	char	*env[] = {"hey", NULL};
+	char	**arg;
+	char	*env[] = {NULL};
 
 	read_args(argc, argv);
 	fds = open_files(argv);
@@ -48,7 +48,8 @@ int	main(int argc, char **argv)
 		str = get_next_line(fds[0]);
 	}
 	close_fds(fds);
-	if (execve("/bin/echo", arg, env) == -1)
+	arg = ft_split(argv[2], ' ');
+	if (execve("/bin/ls", arg, env) == -1)
 		perror_exit("execve");
 	return (0);
 }

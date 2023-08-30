@@ -18,5 +18,4 @@ void	read_args(int argc, char **argv)
 		print_error("invalid arguments");
 	if (access(argv[1], R_OK))
 		perror_exit(argv[1]);
-	fprintf(stdout, "%s\n", argv[1]);
 }
