@@ -15,6 +15,13 @@
 
 # include "libft/libft.h"
 
+typedef struct s_exec
+{
+	char	*path;
+	char	**args;
+	char	**envp;
+}	t_exec;
+
 // input
 void	read_args(int argc, char **argv);
 

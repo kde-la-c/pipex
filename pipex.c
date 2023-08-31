@@ -36,8 +36,7 @@ int	main(int argc, char **argv)
 {
 	char	*str;
 	int		*fds;
-	char	**arg;
-	char	*env[] = {NULL};
+	t_exec	exec;
 
 	read_args(argc, argv);
 	fds = open_files(argv);
@@ -47,9 +46,11 @@ int	main(int argc, char **argv)
 		write(fds[1], str, ft_strlen(str));
 		str = get_next_line(fds[0]);
 	}
-	close_fds(fds);
-	arg = ft_split(argv[2], ' ');
-	if (execve("/bin/ls", arg, env) == -1)
+	exec.args = ft_split(argv[2], ' ');
+	exec.path = ft_strjoin("/bin/", exec.args[0]);
+	exec.envp = (char **)NULL;
+	if (execve(exec.path, exec.args, exec.envp) == -1)
 		perror_exit("execve");
+	close_fds(fds);
 	return (0);
 }
