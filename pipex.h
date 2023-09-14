@@ -15,6 +15,8 @@
 
 # include "libft/libft.h"
 
+# include <sys/wait.h>
+
 typedef struct s_exec
 {
 	char	*path;
@@ -28,5 +30,6 @@ void	read_args(int argc, char **argv);
 // output
 int		print_error(char *err);
 int		perror_exit(char *err);
+int		run_cmd1(char *file1, char *cmd1, char **envp);
 
 #endif

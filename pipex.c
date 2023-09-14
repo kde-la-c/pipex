@@ -26,8 +26,6 @@ int	*open_files(char **argv)
 	return (ret);
 }
 
-
-
 void	close_fds(int *fds)
 {
 	while (*fds)
@@ -36,24 +34,12 @@ void	close_fds(int *fds)
 
 int	main(int argc, char **argv, char **envp)
 {
-	char	*str;
-	int		*fds;
-	t_exec	exec;
-
+	(void)envp;
+	printf("stdin fd:%i\n", fileno(stdin));
 	read_args(argc, argv);
-	fds = open_files(argv);
-	str = get_next_line(fds[0]);
-	while (str)
-	{
-		write(fds[1], str, ft_strlen(str));
-		str = get_next_line(fds[0]);
-	}
-	ft_printf("main pid :%i\n", getpid());
-	exec.args = ft_split(argv[2], ' ');
-	exec.path = ft_strjoin("/bin/", exec.args[0]);
-	exec.envp = envp;
-	if (execve(exec.path, exec.args, exec.envp) == -1)
-		perror_exit("execve");
-	close_fds(fds);
+	// fds = open_files(argv);
+	run_cmd1(argv[1], argv[2], envp);
+	// run_cmd(exec);
+	// close_fds(fds);
 	return (0);
 }
