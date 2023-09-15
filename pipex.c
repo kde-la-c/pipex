@@ -35,7 +35,6 @@ void	close_fds(int *fds)
 int	main(int argc, char **argv, char **envp)
 {
 	(void)envp;
-	printf("stdin fd:%i\n", fileno(stdin));
 	read_args(argc, argv);
 	// fds = open_files(argv);
 	run_cmd1(argv[1], argv[2], envp);
