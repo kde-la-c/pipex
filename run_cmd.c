@@ -31,6 +31,8 @@ char	*get_path(char *cmd, char **envp)
 	paths = ft_split(var, ':');
 	while (paths[c.j] && access(ft_strjoin(ft_strjoin(paths[c.j], "/"), cmd), R_OK))
 		c.j++;
+	if (!paths[c.j])
+		return (NULL);
 	ret = ft_strjoin(paths[c.j], "/");
 	return (ret);
 }
@@ -38,19 +40,25 @@ char	*get_path(char *cmd, char **envp)
 int	run_cmd1(char *file1, char *cmd1, char **envp)
 {
 	int		fd1;
-	// int		fd2;
+	int		fd2;
 	t_exec	cmd;
+	char	*path;
 
 	cmd.args = ft_split(cmd1, ' ');
 	cmd.envp = envp;
-	cmd.path = ft_strjoin(get_path(cmd.args[0], envp), cmd1);
+	path = get_path(cmd.args[0], envp);
+	if (!path)
+		perror_exit(cmd.args[0]);
+	cmd.path = ft_strjoin(path, cmd.args[0]);
 	fd1 = open(file1, O_RDONLY);
-	if (fd1 == -1)
-		perror_exit(file1);
-	dup2(fd1, STDIN_FILENO);
-	if (fd1 == -1)
-		perror_exit(ft_itoa(fd1));
-	if (execve(cmd.path, cmd.args, cmd.envp) == 1)
+	fd2 = open("tmp", O_WRONLY | O_CREAT, 0777);
+	if (fd1 == -1 || fd2 == -1)
+		perror_exit("open");
+	fd1 = dup2(fd1, STDIN_FILENO);
+	fd2 = dup2(fd2, STDOUT_FILENO);
+	if (fd1 == -1 || fd2 == -1)
+		perror_exit("dup2");
+	if (execve(cmd.path, cmd.args, cmd.envp) == -1)
 		perror_exit("execve");
 	return (0);
 }
