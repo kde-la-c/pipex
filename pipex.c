@@ -12,7 +12,7 @@
 
 #include "pipex.h"
 
-int	*open_files(char **argv)
+int	*open_files(char **argv) //useless?
 {
 	int	*ret;
 
@@ -26,7 +26,7 @@ int	*open_files(char **argv)
 	return (ret);
 }
 
-void	close_fds(int *fds)
+void	close_fds(int *fds) //useless?
 {
 	while (*fds)
 		close(*(fds++));
@@ -34,11 +34,7 @@ void	close_fds(int *fds)
 
 int	main(int argc, char **argv, char **envp)
 {
-	(void)envp;
 	read_args(argc, argv);
-	// fds = open_files(argv);
 	run_cmd1(argv[1], argv[2], envp);
-	// run_cmd(exec);
-	// close_fds(fds);
 	return (0);
 }

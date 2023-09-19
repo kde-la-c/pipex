@@ -12,11 +12,6 @@
 
 #include "pipex.h"
 
-// int	new_child()
-// {
-
-// }
-
 char	*get_path(char *cmd, char **envp)
 {
 	t_count	c;
@@ -37,27 +32,42 @@ char	*get_path(char *cmd, char **envp)
 	return (ret);
 }
 
+t_exec	fill_cmd(char *cmd, char **envp)
+{
+	t_exec	ret;
+	char	*path;
+
+	ret.args = ft_split(cmd, ' ');
+	ret.envp = envp;
+	path = get_path(ret.args[0], envp);
+	if (!path)
+		perror_exit(ret.args[0]);
+	ret.path = ft_strjoin(path, ret.args[0]);
+	return (ret);
+}
+
+void	open_fds(int *infd, int *outfd, char *inpath, char *outpath)
+{
+	*infd = open(inpath, O_RDONLY);
+	//was gonna ensure tmp didn't exist before creating and using it
+	//but deleting tmp if it was already existing creates a risk of loosing data
+	*outfd = open(outpath, O_WRONLY | O_CREAT, 0777);
+	if (*infd == -1 || *outfd == -1)
+		perror_exit("open");
+	*infd = dup2(*infd, STDIN_FILENO);
+	*outfd = dup2(*outfd, STDOUT_FILENO);
+	if (*infd == -1 || *outfd == -1)
+		perror_exit("dup2");
+}
+
 int	run_cmd1(char *file1, char *cmd1, char **envp)
 {
 	int		fd1;
 	int		fd2;
 	t_exec	cmd;
-	char	*path;
 
-	cmd.args = ft_split(cmd1, ' ');
-	cmd.envp = envp;
-	path = get_path(cmd.args[0], envp);
-	if (!path)
-		perror_exit(cmd.args[0]);
-	cmd.path = ft_strjoin(path, cmd.args[0]);
-	fd1 = open(file1, O_RDONLY);
-	fd2 = open("tmp", O_WRONLY | O_CREAT, 0777);
-	if (fd1 == -1 || fd2 == -1)
-		perror_exit("open");
-	fd1 = dup2(fd1, STDIN_FILENO);
-	fd2 = dup2(fd2, STDOUT_FILENO);
-	if (fd1 == -1 || fd2 == -1)
-		perror_exit("dup2");
+	cmd = fill_cmd(cmd1, envp);
+	open_fds(&fd1, &fd2, file1, "tmp");
 	if (execve(cmd.path, cmd.args, cmd.envp) == -1)
 		perror_exit("execve");
 	return (0);
