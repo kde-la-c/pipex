@@ -24,7 +24,8 @@ char	*get_path(char *cmd, char **envp)
 		c.i++;
 	var = ft_strnstr(envp[c.i], "=", 7) + 1;
 	paths = ft_split(var, ':');
-	while (paths[c.j] && access(ft_strjoin(ft_strjoin(paths[c.j], "/"), cmd), R_OK))
+	while (paths[c.j]
+		&& access(ft_strjoin(ft_strjoin(paths[c.j], "/"), cmd), R_OK))
 		c.j++;
 	if (!paths[c.j])
 		return (NULL);
@@ -48,14 +49,14 @@ t_exec	fill_cmd(char *cmd, char **envp)
 	return (ret);
 }
 
-void	open_fds(char *inpath)
+void	redir_fd(char *inpath, int redirected)
 {
 	int	fd;
 
 	fd = open(inpath, O_RDONLY);
 	if (fd == -1)
 		perror_exit("open");
-	if (dup2(fd, STDIN_FILENO) == -1)
+	if (dup2(fd, redirected) == -1)
 		perror_exit("dup2");
 }
 
@@ -67,23 +68,23 @@ int	run_cmd1(char *file1, char *cmd1, char **envp)
 
 	fds = (int *)calloc(2, sizeof(int));
 	cmd = fill_cmd(cmd1, envp);
-	open_fds(file1);
+	redir_fd(file1, STDIN_FILENO);
 	if (pipe(fds) == -1)
 		perror_exit("pipe");
 	pid = fork();
 	if (!pid) //child process
 	{
-		close(fds[0]);
 		dup2(fds[1], STDOUT_FILENO);
 		if (execve(cmd.path, cmd.args, cmd.envp) == -1)
 			perror_exit("execve");
 	}
 	else //parent process
 	{
-		close(fds[1]);
 		wait(NULL);
 		printf("parent :%s", get_next_line(fds[0]));
 	}
+	close(fds[0]);
+	close(fds[1]);
 	free(fds);
 	ft_dfree((void **)cmd.args);
 	return (0);
