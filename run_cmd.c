@@ -60,32 +60,44 @@ void	redir_fd(char *inpath, int redirected)
 		perror_exit("dup2");
 }
 
-int	run_cmd1(char *file1, char *cmd1, char **envp)
+void	run_cmd2(char *outfile, char *cmd2, char **envp, int *fds)
+{
+	// int		pid;
+	// t_exec	cmd;
+
+	// cmd = fill_cmd(cmd2, envp);
+	// redir_fd(outfile, STDOUT_FILENO);
+	// if (pipe(fds) == -1)
+	// 	perror_exit("pipe");
+	// pid = fork();
+	// if (!pid)
+	// {
+	// 	dup2(fds[1], STDOUT_FILENO);
+	// 	if (execve(cmd.path, cmd.args, cmd.envp) == -1)
+	// 		perror_exit("execve");
+	// }
+	// else
+	// 	wait(NULL);
+	// ft_dfree((void **)cmd.args);
+}
+
+void	run_cmd1(char *infile, char *cmd1, char **envp, int *fds)
 {
 	int		pid;
-	int		*fds;
 	t_exec	cmd;
 
-	fds = (int *)calloc(2, sizeof(int));
 	cmd = fill_cmd(cmd1, envp);
-	redir_fd(file1, STDIN_FILENO);
+	redir_fd(infile, STDIN_FILENO);
 	if (pipe(fds) == -1)
 		perror_exit("pipe");
 	pid = fork();
-	if (!pid) //child process
+	if (!pid)
 	{
 		dup2(fds[1], STDOUT_FILENO);
 		if (execve(cmd.path, cmd.args, cmd.envp) == -1)
 			perror_exit("execve");
 	}
-	else //parent process
-	{
+	else
 		wait(NULL);
-		printf("parent :%s", get_next_line(fds[0]));
-	}
-	close(fds[0]);
-	close(fds[1]);
-	free(fds);
 	ft_dfree((void **)cmd.args);
-	return (0);
 }

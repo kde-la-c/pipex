@@ -34,7 +34,11 @@ void	close_fds(int *fds) //useless?
 
 int	main(int argc, char **argv, char **envp)
 {
+	int	*fds;
+
+	fds = (int *)calloc(2, sizeof(int));
 	read_args(argc, argv);
-	run_cmd1(argv[1], argv[2], envp);
+	run_cmd1(argv[1], argv[2], envp, fds);
+	run_cmd2(argv[4], argv[3], envp, fds);
 	return (0);
 }
