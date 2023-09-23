@@ -49,36 +49,48 @@ t_exec	fill_cmd(char *cmd, char **envp)
 	return (ret);
 }
 
-void	redir_fd(char *inpath, int redirected)
+void	redir_fd(char *inpath, int infd, int create, int redirected)
 {
 	int	fd;
 
-	fd = open(inpath, O_RDONLY);
+	if (inpath && create)
+		fd = open(inpath, O_WRONLY | O_CREAT, 0777);
+	else if (inpath && !create)
+		fd = open(inpath, O_RDONLY);
+	else
+		fd = infd;
 	if (fd == -1)
-		perror_exit("open");
+		perror_exit(inpath);
 	if (dup2(fd, redirected) == -1)
 		perror_exit("dup2");
 }
 
 void	run_cmd2(char *outfile, char *cmd2, char **envp, int *fds)
 {
-	// int		pid;
-	// t_exec	cmd;
+	int		outfd;
+	int		pid;
+	t_exec	cmd;
 
-	// cmd = fill_cmd(cmd2, envp);
-	// redir_fd(outfile, STDOUT_FILENO);
-	// if (pipe(fds) == -1)
-	// 	perror_exit("pipe");
-	// pid = fork();
-	// if (!pid)
-	// {
-	// 	dup2(fds[1], STDOUT_FILENO);
-	// 	if (execve(cmd.path, cmd.args, cmd.envp) == -1)
-	// 		perror_exit("execve");
-	// }
-	// else
-	// 	wait(NULL);
-	// ft_dfree((void **)cmd.args);
+	cmd = fill_cmd(cmd2, envp);
+	// THIS redir isn't working
+	// redir_fd(NULL, STDIN_FILENO, 0, fds[0]);
+	if (dup2(STDIN_FILENO, fds[0]))
+		perror_exit("dup2");
+	printf("stdin :%s\n", get_next_line(STDIN_FILENO));
+	pid = fork();
+	if (!pid)
+	{
+		// redir_fd(outfile, -1, 1, STDOUT_FILENO);
+		outfd = open(outfile, O_WRONLY | O_CREAT, 0777);
+		dup2(outfd, STDOUT_FILENO);
+		if (execve(cmd.path, cmd.args, cmd.envp) == -1)
+			perror_exit("execve");
+	}
+	else
+	{
+		wait(NULL);
+	}
+	ft_dfree((void **)cmd.args);
 }
 
 void	run_cmd1(char *infile, char *cmd1, char **envp, int *fds)
@@ -87,17 +99,23 @@ void	run_cmd1(char *infile, char *cmd1, char **envp, int *fds)
 	t_exec	cmd;
 
 	cmd = fill_cmd(cmd1, envp);
-	redir_fd(infile, STDIN_FILENO);
-	if (pipe(fds) == -1)
-		perror_exit("pipe");
+	redir_fd(infile, -1, 0, STDIN_FILENO);
 	pid = fork();
 	if (!pid)
 	{
-		dup2(fds[1], STDOUT_FILENO);
+		redir_fd(NULL, fds[1], 0, STDOUT_FILENO);
 		if (execve(cmd.path, cmd.args, cmd.envp) == -1)
 			perror_exit("execve");
 	}
 	else
+	{
 		wait(NULL);
+		// char *str;
+		// do
+		// {
+		// 	str = get_next_line(fds[0]);
+		// 	printf("-%s", str);
+		// } while (str);
+	}
 	ft_dfree((void **)cmd.args);
 }
