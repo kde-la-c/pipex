@@ -20,6 +20,4 @@ dbg*
 *.dSYM
 
 pipex
-test
-ret
-tmp
+tests

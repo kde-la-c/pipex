@@ -16,7 +16,7 @@ int	print_error(char *err)
 {
 	write(2, &err[0], ft_strlen(err));
 	write(2, "\n", 1);
-	exit(1);
+	exit(EXIT_FAILURE);
 }
 
 int	perror_exit(char *err)
