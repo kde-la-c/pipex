@@ -55,7 +55,7 @@ t_exec	fill_cmd(char *cmd, char **envp)
 	return (ret);
 }
 
-void	redir_fd(char *inpath, int infd, int create, int redirected)
+int	redir_fd(char *inpath, int infd, int create, int redirected)
 {
 	int	fd;
 
@@ -66,9 +66,14 @@ void	redir_fd(char *inpath, int infd, int create, int redirected)
 	else
 		fd = infd;
 	if (fd == -1)
+	{
 		perror_exit(inpath);
+	}
 	if (dup2(fd, redirected) == -1)
+	{
 		perror_exit("dup2");
+	}
+	return (fd);
 }
 
 void	run_cmd2(char *outfile, char *cmd2, char **envp, int *fds)
