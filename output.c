@@ -22,5 +22,5 @@ int	print_error(char *err)
 int	perror_exit(char *err)
 {
 	perror(err);
-	exit(1);
+	exit(EXIT_FAILURE);
 }

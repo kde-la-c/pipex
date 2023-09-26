@@ -15,21 +15,28 @@
 char	*get_path(char *cmd, char **envp)
 {
 	t_count	c;
-	char	*var;
 	char	*ret;
+	char	*tmp;
 	char	**paths;
 
 	ft_bzero((void *)&c, sizeof(t_count));
 	while (envp[c.i] && ft_strncmp(envp[c.i], "PATH", 4))
 		c.i++;
-	var = ft_strnstr(envp[c.i], "=", 7) + 1;
-	paths = ft_split(var, ':');
-	while (paths[c.j]
-		&& access(ft_strjoin(ft_strjoin(paths[c.j], "/"), cmd), R_OK))
+	paths = ft_split(ft_strnstr(envp[c.i], "=", 7) + 1, ':');
+	tmp = ft_strjoin(paths[c.j], "/");
+	ret = ft_strjoin_f1(tmp, cmd);
+	while (paths[c.j] && paths[c.j + 1] && access(ret, F_OK))
+	{
+		free(ret);
 		c.j++;
+		tmp = ft_strjoin(paths[c.j], "/");
+		ret = ft_strjoin_f1(tmp, cmd);
+	}
 	if (!paths[c.j])
-		return (NULL);
-	ret = ft_strjoin(paths[c.j], "/");
+	{
+		free(ret);
+		perror_exit("hey");
+	}
 	ft_dfree((void **)paths);
 	return (ret);
 }
@@ -44,8 +51,7 @@ t_exec	fill_cmd(char *cmd, char **envp)
 	path = get_path(ret.args[0], envp);
 	if (!path)
 		perror_exit(ret.args[0]);
-	ret.path = ft_strjoin(path, ret.args[0]);
-	free(path);
+	ret.path = path;
 	return (ret);
 }
 
@@ -77,7 +83,7 @@ void	run_cmd2(char *outfile, char *cmd2, char **envp, int *fds)
 	{
 		redir_fd(outfile, -1, 1, STDOUT_FILENO);
 		if (execve(cmd.path, cmd.args, cmd.envp) == -1)
-			perror_exit("execve");
+			perror_exit(cmd2);
 	}
 	ft_dfree((void **)cmd.args);
 }
@@ -94,7 +100,8 @@ void	run_cmd1(char *infile, char *cmd1, char **envp, int *fds)
 	{
 		redir_fd(NULL, fds[1], 0, STDOUT_FILENO);
 		if (execve(cmd.path, cmd.args, cmd.envp) == -1)
-			perror_exit("execve");
+			perror_exit(cmd1);
 	}
 	ft_dfree((void **)cmd.args);
+	free(cmd.path);
 }
