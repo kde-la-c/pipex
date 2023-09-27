@@ -15,7 +15,8 @@ NAME_DBG	= dbg
 SRC			= pipex.c\
 			input.c\
 			output.c\
-			run_cmd.c
+			run_cmd.c\
+			fill_cmd.c
 OBJS		= $(SRC:%.c=%.o)
 INCLUDE		= pipex.h
 CC			= gcc

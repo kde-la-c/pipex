@@ -33,4 +33,7 @@ int		perror_exit(char *err);
 void	run_cmd1(char *infile, char *cmd1, char **envp, int *fds);
 void	run_cmd2(char *outfile, char *cmd2, char **envp, int *fds);
 
+// cmd interpreter
+t_exec	fill_cmd(char *cmd, char **envp);
+
 #endif
