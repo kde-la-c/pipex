@@ -57,6 +57,7 @@ t_exec	fill_cmd(char *cmd, char **envp)
 
 int	redir_fd(char *inpath, int infd, int create, int redirected)
 {
+	int	tmp;
 	int	fd;
 
 	if (inpath && create)
@@ -69,7 +70,9 @@ int	redir_fd(char *inpath, int infd, int create, int redirected)
 	{
 		perror_exit(inpath);
 	}
-	if (dup2(fd, redirected) == -1)
+	tmp = dup2(fd, redirected);
+	close(fd);
+	if (tmp == -1)
 	{
 		perror_exit("dup2");
 	}
@@ -82,11 +85,13 @@ void	run_cmd2(char *outfile, char *cmd2, char **envp, int *fds)
 	t_exec	cmd;
 
 	cmd = fill_cmd(cmd2, envp);
-	redir_fd(NULL, fds[0], 0, STDIN_FILENO);
 	pid = fork();
 	if (!pid)
 	{
+		close(fds[1]);
+		redir_fd(NULL, fds[0], 0, STDIN_FILENO);
 		redir_fd(outfile, -1, 1, STDOUT_FILENO);
+		// ft_fdprintf(2, "%i->%s\n", STDIN_FILENO, get_next_line(STDIN_FILENO));
 		if (execve(cmd.path, cmd.args, cmd.envp) == -1)
 			perror_exit(cmd2);
 	}
@@ -99,11 +104,13 @@ void	run_cmd1(char *infile, char *cmd1, char **envp, int *fds)
 	t_exec	cmd;
 
 	cmd = fill_cmd(cmd1, envp);
-	redir_fd(infile, -1, 0, STDIN_FILENO);
 	pid = fork();
 	if (!pid)
 	{
+		close(fds[0]);
+		redir_fd(infile, -1, 0, STDIN_FILENO);
 		redir_fd(NULL, fds[1], 0, STDOUT_FILENO);
+		// ft_fdprintf(2, "%i->%s\n", STDIN_FILENO, get_next_line(STDIN_FILENO));
 		if (execve(cmd.path, cmd.args, cmd.envp) == -1)
 			perror_exit(cmd1);
 	}
