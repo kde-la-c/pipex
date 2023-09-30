@@ -12,7 +12,7 @@
 
 #include "pipex.h"
 
-char	*get_path(char *cmd, char **envp)
+char	*get_envpath(char *cmd, char **envp)
 {
 	t_count	c;
 	char	*ret;
@@ -33,12 +33,17 @@ char	*get_path(char *cmd, char **envp)
 		ret = ft_strjoin_f1(tmp, cmd);
 	}
 	if (!paths[c.j])
-	{
-		free(ret);
-		perror_exit("hey");
-	}
+		perror_exit(paths[c.j]);
 	ft_dfree((void **)paths);
 	return (ret);
+}
+
+char	*get_path(char *cmd, char **envp)
+{
+	if (!ft_strlen(cmd))
+		return (NULL);
+	else
+		return (get_envpath(cmd, envp));
 }
 
 t_exec	fill_cmd(char *cmd, char **envp)
