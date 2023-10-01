@@ -40,8 +40,14 @@ char	*get_envpath(char *cmd, char **envp)
 
 char	*get_path(char *cmd, char **envp)
 {
-	if (!ft_strlen(cmd))
+	if (!cmd)
 		return (NULL);
+	else if (!*envp)
+	{
+		if (access(cmd, F_OK) == -1)
+			perror_exit(cmd);
+		return (cmd);
+	}
 	else
 		return (get_envpath(cmd, envp));
 }
@@ -55,7 +61,8 @@ t_exec	fill_cmd(char *cmd, char **envp)
 	ret.envp = envp;
 	path = get_path(ret.args[0], envp);
 	if (!path)
-		perror_exit(ret.args[0]);
-	ret.path = path;
+		ret.path = NULL;
+	else
+		ret.path = path;
 	return (ret);
 }
