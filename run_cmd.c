@@ -12,15 +12,6 @@
 
 #include "pipex.h"
 
-/*	dup2(old_fd, new_fd);
-	old_fd("file1") new_fd("file2")
-	old_fd("file1") new_fd(VOID)
-->	old_fd("file1") new_fd("file1")
-
-	old_fd("file1") new_fd("file1")
-->	old_fd("file1") new_fd("file1")
-*/
-
 void	redir_fd(char *srcpath, int srcfd, int create, int dest)
 {
 	if (srcpath && create)
@@ -34,20 +25,21 @@ void	redir_fd(char *srcpath, int srcfd, int create, int dest)
 	close(srcfd);
 }
 
-void	copy_paste(int fd, char *outfile)
+void	copy_paste(int *fds, char *outfile)
 {
 	int		outfd;
 	char	*line;
 
+	close(fds[1]);
 	outfd = open(outfile, O_WRONLY | O_CREAT | O_TRUNC, 0777);
 	if (outfd == -1)
 		perror_exit(outfile);
-	line = get_next_line(fd);
+	line = get_next_line(fds[0]);
 	while (line)
 	{
 		write(outfd, line, ft_strlen(line));
 		free(line);
-		line = get_next_line(fd);
+		line = get_next_line(fds[0]);
 	}
 	free(line);
 }
@@ -59,7 +51,7 @@ void	run_cmd2(char *outfile, char *cmd2, char **envp, int *fds)
 
 	cmd = fill_cmd(cmd2, envp);
 	if (!cmd.path)
-		copy_paste(fds[0], outfile);
+		copy_paste(fds, outfile);
 	else
 	{
 		pid = fork();
