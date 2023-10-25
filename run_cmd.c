@@ -31,7 +31,7 @@ void	copy_paste(int *fds, char *outfile)
 	char	*line;
 
 	close(fds[1]);
-	outfd = open(outfile, O_WRONLY | O_CREAT | O_TRUNC, 0777);
+	outfd = open(outfile, O_WRONLY | O_CREAT | O_TRUNC, 0644);
 	if (outfd == -1)
 		perror_exit(outfile);
 	line = get_next_line(fds[0]);
