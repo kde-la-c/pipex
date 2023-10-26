@@ -31,8 +31,8 @@ void	read_args(int argc, char **argv);
 // output
 int		print_error(char *err);
 int		perror_exit(char *err);
-void	run_cmd1(char *infile, char *cmd1, char **envp, int *fds);
-void	run_cmd2(char *outfile, char *cmd2, char **envp, int *fds);
+int		run_cmd1(char *infile, char *cmd1, char **envp, int *fds);
+int		run_cmd2(char *outfile, char *cmd2, char **envp, int *fds);
 
 // cmd interpreter
 t_exec	fill_cmd(char *cmd, char **envp);

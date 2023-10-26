@@ -59,7 +59,7 @@ t_exec	fill_cmd(char *cmd, char **envp)
 
 	ret.args = ft_split(cmd, ' ');
 	ret.envp = envp;
-	if (access(ret.args[0], F_OK))
+	if (access(ret.args[0], X_OK))
 		path = get_path(ret.args[0], envp);
 	else
 		path = ret.args[0];
