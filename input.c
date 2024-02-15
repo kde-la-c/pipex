@@ -14,7 +14,7 @@
 
 void	read_args(int argc, char **argv)
 {
-	if (argc != 5)
+	if (argc < 5)
 		print_error("invalid arguments");
 	if (access(argv[1], R_OK))
 		perror_exit(argv[1]);

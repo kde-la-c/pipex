@@ -19,8 +19,8 @@ int	main(int argc, char **argv, char **envp)
 	if (pipe(fds) == -1)
 		perror_exit("pipe");
 	read_args(argc, argv);
-	run_cmd1(argv[1], argv[2], envp, fds);
-	run_cmd2(argv[4], argv[3], envp, fds);
+	run_cmd_first(argv[1], argv[2], envp, fds);
+	run_cmd_last(argv[4], argv[3], envp, fds);
 	close(fds[0]);
 	close(fds[1]);
 	return (0);

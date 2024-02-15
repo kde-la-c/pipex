@@ -44,7 +44,7 @@ void	copy_paste(int *fds, char *outfile)
 	free(line);
 }
 
-void	run_cmd2(char *outfile, char *cmd2, char **envp, int *fds)
+void	run_cmd_last(char *outfile, char *cmd2, char **envp, int *fds)
 {
 	int		pid;
 	t_exec	cmd;
@@ -73,7 +73,7 @@ void	run_cmd2(char *outfile, char *cmd2, char **envp, int *fds)
 	ft_dfree((void **)cmd.args);
 }
 
-void	run_cmd1(char *infile, char *cmd1, char **envp, int *fds)
+void	run_cmd_first(char *infile, char *cmd1, char **envp, int *fds)
 {
 	int		pid;
 	t_exec	cmd;
