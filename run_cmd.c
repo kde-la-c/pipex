@@ -12,6 +12,14 @@
 
 #include "pipex.h"
 
+void	close_both(int *fds)
+{
+	if (close(fds[0]))
+		perror_exit("read pipe fd");
+	if (close(fds[1]))
+		perror_exit("write pipe fd");
+}
+
 void	redir_fd(char *srcpath, int srcfd, int create, int dest)
 {
 	if (srcpath && create)
@@ -44,7 +52,7 @@ void	copy_paste(int *fds, char *outfile)
 	free(line);
 }
 
-void	run_cmd_last(char *outfile, char *command, char **envp, int *fds)
+int	run_cmd_last(char *outfile, char *command, char **envp, int *fds)
 {
 	int		pid;
 	t_exec	cmd;
@@ -61,16 +69,15 @@ void	run_cmd_last(char *outfile, char *command, char **envp, int *fds)
 			redir_fd(outfile, -1, 1, STDOUT_FILENO);
 			close(fds[0]);
 			if (execve(cmd.path, cmd.args, cmd.envp) == -1)
-				perror_exit(command);
+				return (ft_dfree((void **)cmd.args), 1);
 		}
 		else
 		{
-			close(fds[0]);
-			close(fds[1]);
+			close_both(fds);
 			waitpid(pid, NULL, 0);
 		}
 	}
-	ft_dfree((void **)cmd.args);
+	return (ft_dfree((void **)cmd.args), 0);
 }
 
 // void	run_cmd_middle(char *command, char **envp, int *fds)
@@ -81,7 +88,7 @@ void	run_cmd_last(char *outfile, char *command, char **envp, int *fds)
 // 	cmd = fill_cmd(command, envp);
 // }
 
-void	run_cmd_first(char *infile, char *command, char **envp, int *fds)
+int	run_cmd_first(char *infile, char *command, char **envp, int *fds)
 {
 	int		pid;
 	t_exec	cmd;
@@ -90,8 +97,7 @@ void	run_cmd_first(char *infile, char *command, char **envp, int *fds)
 	if (!cmd.path)
 	{
 		redir_fd(infile, -1, 0, fds[0]);
-		ft_dfree((void **)cmd.args);
-		return ;
+		return (ft_dfree((void **)cmd.args), 1);
 	}
 	pid = fork();
 	if (!pid && !close(fds[0]))
@@ -100,9 +106,9 @@ void	run_cmd_first(char *infile, char *command, char **envp, int *fds)
 		redir_fd(NULL, fds[1], 0, STDOUT_FILENO);
 		close(fds[1]);
 		if (execve(cmd.path, cmd.args, cmd.envp) == -1)
-			perror_exit(command);
+			return (ft_dfree((void **)cmd.args), 1);
 	}
 	else
 		waitpid(pid, NULL, WNOHANG);
-	ft_dfree((void **)cmd.args);
+	return (ft_dfree((void **)cmd.args), 0);
 }

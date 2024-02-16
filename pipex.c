@@ -19,8 +19,10 @@ int	main(int argc, char **argv, char **envp)
 	if (pipe(fds) == -1)
 		perror_exit("pipe");
 	read_args(argc, argv);
-	run_cmd_first(argv[1], argv[2], envp, fds);
-	run_cmd_last(argv[argc - 1], argv[argc - 2], envp, fds);
+	if (run_cmd_first(argv[1], argv[2], envp, fds))
+		perror_exit(argv[2]);
+	if (run_cmd_last(argv[argc - 1], argv[argc - 2], envp, fds))
+		perror_exit(argv[3]);
 	close(fds[0]);
 	close(fds[1]);
 	return (0);
