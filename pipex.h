@@ -33,6 +33,7 @@ int		print_error(char *err);
 int		perror_exit(char *err);
 int		run_cmd_first(char *infile, char *command, char **envp, int *fds);
 int		run_cmd_last(char *outfile, char *command, char **envp, int *fds);
+int		run_cmd_middle(char *command, char **envp, int *fds);
 
 // cmd interpreter
 t_exec	fill_cmd(char *cmd, char **envp);

@@ -14,13 +14,21 @@
 
 int	main(int argc, char **argv, char **envp)
 {
+	int	i;
 	int	fds[2];
 
+	i = 5;
 	if (pipe(fds) == -1)
 		perror_exit("pipe");
 	read_args(argc, argv);
 	if (run_cmd_first(argv[1], argv[2], envp, fds))
 		perror_exit(argv[2]);
+	while (i < argc)
+	{
+		if (run_cmd_middle(argv[i - 1], envp, fds))
+			perror_exit(argv[i - 1]);
+		i++;
+	}
 	if (run_cmd_last(argv[argc - 1], argv[argc - 2], envp, fds))
 		perror_exit(argv[3]);
 	close(fds[0]);
