@@ -20,7 +20,7 @@ int	main(int argc, char **argv, char **envp)
 		perror_exit("pipe");
 	read_args(argc, argv);
 	run_cmd_first(argv[1], argv[2], envp, fds);
-	run_cmd_last(argv[4], argv[3], envp, fds);
+	run_cmd_last(argv[argc - 1], argv[argc - 2], envp, fds);
 	close(fds[0]);
 	close(fds[1]);
 	return (0);

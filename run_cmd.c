@@ -44,12 +44,12 @@ void	copy_paste(int *fds, char *outfile)
 	free(line);
 }
 
-void	run_cmd_last(char *outfile, char *cmd2, char **envp, int *fds)
+void	run_cmd_last(char *outfile, char *command, char **envp, int *fds)
 {
 	int		pid;
 	t_exec	cmd;
 
-	cmd = fill_cmd(cmd2, envp);
+	cmd = fill_cmd(command, envp);
 	if (!cmd.path)
 		copy_paste(fds, outfile);
 	else
@@ -61,7 +61,7 @@ void	run_cmd_last(char *outfile, char *cmd2, char **envp, int *fds)
 			redir_fd(outfile, -1, 1, STDOUT_FILENO);
 			close(fds[0]);
 			if (execve(cmd.path, cmd.args, cmd.envp) == -1)
-				perror_exit(cmd2);
+				perror_exit(command);
 		}
 		else
 		{
@@ -73,12 +73,20 @@ void	run_cmd_last(char *outfile, char *cmd2, char **envp, int *fds)
 	ft_dfree((void **)cmd.args);
 }
 
-void	run_cmd_first(char *infile, char *cmd1, char **envp, int *fds)
+// void	run_cmd_middle(char *command, char **envp, int *fds)
+// {
+// 	int		pid;
+// 	t_exec	cmd;
+
+// 	cmd = fill_cmd(command, envp);
+// }
+
+void	run_cmd_first(char *infile, char *command, char **envp, int *fds)
 {
 	int		pid;
 	t_exec	cmd;
 
-	cmd = fill_cmd(cmd1, envp);
+	cmd = fill_cmd(command, envp);
 	if (!cmd.path)
 	{
 		redir_fd(infile, -1, 0, fds[0]);
@@ -92,7 +100,7 @@ void	run_cmd_first(char *infile, char *cmd1, char **envp, int *fds)
 		redir_fd(NULL, fds[1], 0, STDOUT_FILENO);
 		close(fds[1]);
 		if (execve(cmd.path, cmd.args, cmd.envp) == -1)
-			perror_exit(cmd1);
+			perror_exit(command);
 	}
 	else
 		waitpid(pid, NULL, WNOHANG);
