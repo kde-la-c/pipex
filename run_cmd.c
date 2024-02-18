@@ -80,7 +80,7 @@ int	run_cmd_last(char *outfile, char *command, char **envp, int *fds)
 	return (ft_dfree((void **)cmd.args), 0);
 }
 
-int	run_cmd_middle(char *command, char **envp, int *fds)
+int	run_cmd_middle(char *command, char **envp, int *fdsin, int *fdsout)
 {
 	int		pid;
 	t_exec	cmd;
@@ -89,11 +89,12 @@ int	run_cmd_middle(char *command, char **envp, int *fds)
 	if (!cmd.path)
 		return (1);
 	pid = fork();
-	if (!pid)
+	if (!pid && !close(fdsin[1]))
 	{
-		redir_fd(NULL, fds[0], 0, STDIN_FILENO);
-		redir_fd(NULL, fds[1], 0, STDOUT_FILENO);
-		close_both(fds);
+		redir_fd(NULL, fdsin[0], 0, STDIN_FILENO);
+		redir_fd(NULL, fdsout[1], 0, STDOUT_FILENO);
+		close(fdsin[0]);
+		close_both(fdsout);
 		if (execve(cmd.path, cmd.args, cmd.envp) == -1)
 			return (ft_dfree((void **)cmd.args), 1);
 	}
