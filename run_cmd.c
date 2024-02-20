@@ -14,10 +14,19 @@
 
 void	close_both(int *fds)
 {
+	static int i = 0;
+
 	if (close(fds[0]))
-		perror_exit("read pipe fd");
+	{
+		ft_fdprintf(2, ">%i\n", i);
+		perror_exit("close read pipe");
+	}
 	if (close(fds[1]))
-		perror_exit("write pipe fd");
+	{
+		ft_fdprintf(2, ">%i\n", i);
+		perror_exit("close write pipe");
+	}
+	i++;
 }
 
 void	redir_fd(char *srcpath, int srcfd, int create, int dest)
@@ -89,12 +98,12 @@ int	run_cmd_middle(char *command, char **envp, int *fdsin, int *fdsout)
 	if (!cmd.path)
 		return (1);
 	pid = fork();
-	if (!pid && !close(fdsin[1]))
+	if (!pid && !close(fdsin[1]) && !close(fdsout[0]))
 	{
 		redir_fd(NULL, fdsin[0], 0, STDIN_FILENO);
 		redir_fd(NULL, fdsout[1], 0, STDOUT_FILENO);
 		close(fdsin[0]);
-		close_both(fdsout);
+		close(fdsout[1]);
 		if (execve(cmd.path, cmd.args, cmd.envp) == -1)
 			return (ft_dfree((void **)cmd.args), 1);
 	}
