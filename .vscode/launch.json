@@ -9,7 +9,7 @@
 		"type": "cppdbg",
 		"request": "launch",
 		"program": "${workspaceFolder}/dbg",
-		"args": ["test", "ls", "a", "ret"],
+		"args": ["test", "ls", "cat", "grep .c", "ret"],
 		"stopAtEntry": false,
 		"cwd": "${workspaceFolder}",
 		"environment": [],

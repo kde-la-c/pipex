@@ -20,14 +20,14 @@ int	**init_pipes(int nbpipes)
 	i = 0;
 	fds = (int **)malloc(sizeof(int *) * nbpipes);
 	if (!fds)
-		perror_exit("file descriptor allocation");
+		perror_exit("file descriptor");
 	while (i < nbpipes)
 	{
-		fds[i] = (int *)calloc(sizeof(int), 2);
+		fds[i] = (int *)malloc(sizeof(int) * 2);
 		if (!fds)
 		{
 			ft_dfree((void **)fds);
-			perror_exit("file descriptors allocation");
+			perror_exit("file descriptors");
 		}
 		if (pipe(fds[i]) == -1)
 		{
@@ -44,16 +44,15 @@ int	main(int argc, char **argv, char **envp)
 	int	i;
 	int	**fds;
 
-	i = 0;
+	i = 3;
 	fds = init_pipes(argc - 4);
 	read_args(argc, argv);
 	if (run_cmd_first(argv[1], argv[2], envp, fds[0]))
 		perror_exit(argv[2]);
-	while (i < argc - 5)
+	while (++i < argc - 5)
 	{
 		if (run_cmd_middle(argv[i], envp, fds[i], fds[i + 1]))
 			perror_exit(argv[i]);
-		i++;
 	}
 	if (run_cmd_last(argv[argc - 1], argv[argc - 2], envp, fds[i]))
 		perror_exit(argv[3]);

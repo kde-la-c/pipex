@@ -17,15 +17,9 @@ void	close_both(int *fds)
 	static int i = 0;
 
 	if (close(fds[0]))
-	{
-		ft_fdprintf(2, ">%i\n", i);
 		perror_exit("close read pipe");
-	}
 	if (close(fds[1]))
-	{
-		ft_fdprintf(2, ">%i\n", i);
 		perror_exit("close write pipe");
-	}
 	i++;
 }
 
@@ -72,8 +66,9 @@ int	run_cmd_last(char *outfile, char *command, char **envp, int *fds)
 	else
 	{
 		pid = fork();
-		if (!pid && !close(fds[1]))
+		if (!pid)
 		{
+			close(fds[1]);
 			redir_fd(NULL, fds[0], 0, STDIN_FILENO);
 			redir_fd(outfile, -1, 1, STDOUT_FILENO);
 			close(fds[0]);
@@ -98,8 +93,10 @@ int	run_cmd_middle(char *command, char **envp, int *fdsin, int *fdsout)
 	if (!cmd.path)
 		return (1);
 	pid = fork();
-	if (!pid && !close(fdsin[1]) && !close(fdsout[0]))
+	if (!pid)
 	{
+		close(fdsin[1]);
+		close(fdsout[0]);
 		redir_fd(NULL, fdsin[0], 0, STDIN_FILENO);
 		redir_fd(NULL, fdsout[1], 0, STDOUT_FILENO);
 		close(fdsin[0]);
@@ -108,7 +105,9 @@ int	run_cmd_middle(char *command, char **envp, int *fdsin, int *fdsout)
 			return (ft_dfree((void **)cmd.args), 1);
 	}
 	else
+	{
 		waitpid(pid, NULL, WNOHANG);
+	}
 	return (ft_dfree((void **)cmd.args), 0);
 }
 
@@ -124,8 +123,9 @@ int	run_cmd_first(char *infile, char *command, char **envp, int *fds)
 		return (ft_dfree((void **)cmd.args), 1);
 	}
 	pid = fork();
-	if (!pid && !close(fds[0]))
+	if (!pid)
 	{
+		close(fds[0]);
 		redir_fd(infile, -1, 0, STDIN_FILENO);
 		redir_fd(NULL, fds[1], 0, STDOUT_FILENO);
 		close(fds[1]);
@@ -133,6 +133,8 @@ int	run_cmd_first(char *infile, char *command, char **envp, int *fds)
 			return (ft_dfree((void **)cmd.args), 1);
 	}
 	else
+	{
 		waitpid(pid, NULL, WNOHANG);
+	}
 	return (ft_dfree((void **)cmd.args), 0);
 }
