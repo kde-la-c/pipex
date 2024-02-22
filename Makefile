@@ -16,7 +16,8 @@ SRC			= pipex.c\
 			input.c\
 			output.c\
 			run_cmd.c\
-			fill_cmd.c
+			fill_cmd.c\
+			handle_fds.c
 OBJS		= $(SRC:%.c=%.o)
 INCLUDE		= pipex.h
 CC			= gcc
