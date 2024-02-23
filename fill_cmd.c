@@ -44,7 +44,7 @@ char	*get_path(char *cmd, char **envp)
 	{
 		if (access(cmd, F_OK) == -1)
 			perror_exit(cmd);
-		return (cmd);
+		return (ft_strdup(cmd));
 	}
 	else
 		return (get_envpath(cmd, envp));
@@ -69,6 +69,7 @@ t_exec	fill_cmd(char *cmd, char **envp)
 	if (!path)
 		ret.path = NULL;
 	else
-		ret.path = path;
+		ret.path = ft_strdup(path);
+	free(path);
 	return (ret);
 }

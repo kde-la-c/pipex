@@ -44,17 +44,18 @@ int	main(int argc, char **argv, char **envp)
 	int	i;
 	int	**fds;
 
-	i = 3;
+	i = -1;
 	fds = init_pipes(argc - 4);
 	read_args(argc, argv);
 	if (run_cmd_first(argv[1], argv[2], envp, fds[0]))
 		perror_exit(argv[2]);
 	while (++i < argc - 5)
 	{
-		if (run_cmd_middle(argv[i], envp, fds[i], fds[i + 1]))
+		if (run_cmd_middle(argv[i + 4], envp, fds[i], fds[i + 1]))
 			perror_exit(argv[i]);
 	}
 	if (run_cmd_last(argv[argc - 1], argv[argc - 2], envp, fds[i]))
 		perror_exit(argv[3]);
+	ft_dnfree((void **)fds, argc - 4);
 	return (0);
 }

@@ -23,7 +23,7 @@ void	close_both(int *fds)
 void	redir_fd(char *srcpath, int srcfd, int create, int dest)
 {
 	if (srcpath && create)
-		srcfd = open(srcpath, O_WRONLY | O_CREAT | O_TRUNC, 0777);
+		srcfd = open(srcpath, O_RDWR | O_CREAT | O_TRUNC, 0644);
 	else if (srcpath && !create)
 		srcfd = open(srcpath, O_RDONLY);
 	if (srcfd == -1)
@@ -39,7 +39,7 @@ void	copy_paste(int *fds, char *outfile)
 	char	*line;
 
 	close(fds[1]);
-	outfd = open(outfile, O_WRONLY | O_CREAT | O_TRUNC, 0644);
+	outfd = open(outfile, O_RDWR | O_CREAT | O_TRUNC, 0644);
 	if (outfd == -1)
 		perror_exit(outfile);
 	line = get_next_line(fds[0]);
