@@ -63,7 +63,6 @@ int	run_cmd_middle(char *command, char **envp, int *fdsin, int *fdsout)
 	else
 	{
 		close_both(fdsin);
-		// close_both(fdsout);
 		waitpid(pid, NULL, 0);
 	}
 	return (ft_dfree((void **)cmd.args), free(cmd.path), 0);
@@ -93,8 +92,6 @@ int	run_cmd_last(char *outfile, char *command, char **envp, int *fds)
 		{
 			close_both(fds);
 			waitpid(pid, NULL, 0);
-			// while (waitpid(pid, NULL, WNOHANG))
-			// 	printf("");
 		}
 	}
 	return (ft_dfree((void **)cmd.args), free(cmd.path), 0);

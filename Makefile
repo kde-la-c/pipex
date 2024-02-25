@@ -18,7 +18,14 @@ SRC			= pipex.c\
 			run_cmd.c\
 			fill_cmd.c\
 			handle_fds.c
+# BSRC		= pipex_bonus.c\
+			input_bonus.c\
+			output_bonus.c\
+			run_cmd_bonus.c\
+			fill_cmd_bonus.c\
+			handle_fds_bonus.c
 OBJS		= $(SRC:%.c=%.o)
+# BOBJS		= $(BSRC:%.c=%.o)
 INCLUDE		= pipex.h
 CC			= gcc
 CFLAGS		= -Wall -Wextra -Werror
@@ -35,6 +42,12 @@ $(NAME):	$(OBJS) $(INCLUDE) $(LIBNAME)
 	$(RM) $(RFLAGS) $(OBJS)
 	@echo "\033[0;31m--- RELINK ---\033[0m"
 			@echo "\033[0;32m--- $(NAME) compiled successfully! ---\033[0m"
+
+# bonus:		$(BOBJS) $(INCLUDE) $(LIBNAME)
+# 			$(CC) $(CFLAGS) $(BOBJS) -o $(NAME) $(LIBNAME)
+# 	$(RM) $(RFLAGS) $(BOBJS)
+# 	@echo "\033[0;31m--- RELINK ---\033[0m"
+# 			@echo "\033[0;32m--- Bonus files added successfully! ---\033[0m"
 
 l:			$(OBJS) $(INCLUDE) $(LIBNAME)
 			$(CC) $(CFLAGS) -fsanitize=leak -g3 $(OBJS) -o $(NAME) $(LIBNAME)
