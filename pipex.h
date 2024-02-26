@@ -38,7 +38,6 @@ t_exec	fill_cmd(char *cmd, char **envp);
 // handle file descriptors and pipes
 void	close_both(int *fds);
 void	redir_fd(char *srcpath, int srcfd, int create, int dest);
-void	copy_paste(int *fds, char *outfile);
 
 // run commands
 int		run_cmd_first(char *infile, char *command, char **envp, int *fds);

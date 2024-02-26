@@ -32,22 +32,3 @@ void	redir_fd(char *srcpath, int srcfd, int create, int dest)
 		perror_exit("dup");
 	close(srcfd);
 }
-
-void	copy_paste(int *fds, char *outfile)
-{
-	int		outfd;
-	char	*line;
-
-	close(fds[1]);
-	outfd = open(outfile, O_RDWR | O_CREAT | O_TRUNC, 0644);
-	if (outfd == -1)
-		perror_exit(outfile);
-	line = get_next_line(fds[0]);
-	while (line)
-	{
-		write(outfd, line, ft_strlen(line));
-		free(line);
-		line = get_next_line(fds[0]);
-	}
-	free(line);
-}

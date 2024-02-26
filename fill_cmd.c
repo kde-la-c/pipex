@@ -23,6 +23,8 @@ char	*get_envpath(char *cmd, char **envp)
 	while (envp[c.i] && ft_strncmp(envp[c.i], "PATH", 4))
 		c.i++;
 	paths = ft_split(ft_strnstr(envp[c.i], "=", 7) + 1, ':');
+	if (!paths)
+		perror_exit("env variables");
 	while (paths[c.j] && paths[c.j + 1] && access(ret, F_OK))
 	{
 		if (c.j)
@@ -59,7 +61,7 @@ t_exec	fill_cmd(char *cmd, char **envp)
 	if (!ret.args)
 	{
 		ft_dfree((void *)ret.args);
-		print_error("memory allocation problem");
+		perror_exit(cmd);
 	}
 	ret.envp = envp;
 	if (access(ret.args[0], X_OK))
