@@ -24,7 +24,7 @@ int	**init_pipes(int nbpipes)
 	while (i < nbpipes)
 	{
 		fds[i] = (int *)malloc(sizeof(int) * 2);
-		if (!fds)
+		if (!fds[i])
 		{
 			ft_dfree((void **)fds);
 			perror_exit("file descriptors");
