@@ -65,7 +65,7 @@ t_exec	fill_cmd(char *cmd, char **envp)
 	if (access(ret.args[0], X_OK))
 		path = get_path(ret.args[0], envp);
 	else
-		path = ret.args[0];
+		path = ft_strdup(ret.args[0]);
 	if (!path)
 		ret.path = NULL;
 	else
