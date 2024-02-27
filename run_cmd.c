@@ -20,11 +20,12 @@ static int	run_cmd_first(t_core *core, int cmd_id)
 	{
 		cmd = fill_cmd(core->commands[cmd_id], core->envp);
 		close(core->fds[cmd_id][READ]);
-		redir_fd(core->infile, -1, 0, STDIN_FILENO);
+		if (core->infile)
+			redir_fd(core->infile, -1, 0, STDIN_FILENO);
 		redir_fd(NULL, core->fds[cmd_id][WRITE], 0, STDOUT_FILENO);
 		close(core->fds[cmd_id][WRITE]);
 		if (execve(cmd.path, cmd.args, cmd.envp) == -1)
-			return (ft_dfree((void **)cmd.args), free(cmd.path), EXIT_FAILURE);
+			perror_exit(cmd.args[0], EXIT_FAILURE);
 	}
 	return (EXIT_SUCCESS);
 }
@@ -43,7 +44,7 @@ static int	run_cmd_middle(t_core *core, int cmd_id)
 		close(core->fds[cmd_id - 1][READ]);
 		close(core->fds[cmd_id][WRITE]);
 		if (execve(cmd.path, cmd.args, cmd.envp) == -1)
-			return (ft_dfree((void **)cmd.args), free(cmd.path), EXIT_FAILURE);
+			perror_exit(cmd.args[0], EXIT_FAILURE);
 	}
 	else
 		close_both(core->fds[cmd_id - 1]);
@@ -62,7 +63,7 @@ static int	run_cmd_last(t_core *core, int cmd_id)
 		redir_fd(core->outfile, -1, 1, STDOUT_FILENO);
 		close(core->fds[cmd_id - 1][READ]);
 		if (execve(cmd.path, cmd.args, cmd.envp) == -1)
-			return (ft_dfree((void **)cmd.args), free(cmd.path), EXIT_FAILURE);
+			perror_exit(cmd.args[0], EXIT_FAILURE);
 	}
 	else
 		close_both(core->fds[cmd_id - 1]);

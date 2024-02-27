@@ -45,7 +45,10 @@ void	init_core(t_core *core, int argc, char **argv, char **envp)
 
 	i = -1;
 	core->nbcommands = argc - 3;
-	core->infile = argv[1];
+	if (!access(argv[1], R_OK))
+		core->infile = argv[1];
+	else
+		core->infile = NULL;
 	core->outfile = argv[argc - 1];
 	core->fds = init_pipes(core->nbcommands - 1);
 	core->envp = envp;
