@@ -19,16 +19,18 @@ int	main(int argc, char **argv, char **envp)
 	t_core	*core;
 
 	i = 0;
-	j = 0;
 	read_args(argc, argv);
 	core = (t_core *)malloc(sizeof(t_core));
 	if (!core)
 		perror_exit("structure", EXIT_FAILURE);
 	init_core(core, argc, argv, envp);
-	command_runner(core);
+	j = command_runner(core);
+	if (j)
+		perror_exit("cmd", j);
 	while (i < core->nbcommands && core->pids[i] == 0)
 	{
 		waitpid(core->pids[i], NULL, 0);
 		i++;
 	}
+	return (EXIT_SUCCESS);
 }

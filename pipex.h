@@ -48,7 +48,7 @@ int		perror_exit(char *err, int status);
 
 // initialize core
 int		**init_pipes(int nbpipes);
-int		init_core(t_core *core, int argc, char **argv, char **envp);
+void	init_core(t_core *core, int argc, char **argv, char **envp);
 
 // interpret commands
 t_exec	fill_cmd(char *cmd, char **envp);

@@ -39,7 +39,7 @@ int	**init_pipes(int nbpipes)
 	return (fds);
 }
 
-int	init_core(t_core *core, int argc, char **argv, char **envp)
+void	init_core(t_core *core, int argc, char **argv, char **envp)
 {
 	int	i;
 
@@ -57,5 +57,4 @@ int	init_core(t_core *core, int argc, char **argv, char **envp)
 		perror_exit("commands", EXIT_FAILURE);
 	while (++i < argc - 3)
 		core->commands[i] = argv[i + 2];
-	return (EXIT_SUCCESS);
 }
