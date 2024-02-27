@@ -12,15 +12,15 @@
 
 #include "pipex.h"
 
-int	print_error(char *err)
+int	print_error(char *err, int status)
 {
 	write(2, &err[0], ft_strlen(err));
 	write(2, "\n", 1);
-	exit(EXIT_FAILURE);
+	exit(status);
 }
 
-int	perror_exit(char *err)
+int	perror_exit(char *err, int status)
 {
 	perror(err);
-	exit(EXIT_FAILURE);
+	exit(status);
 }

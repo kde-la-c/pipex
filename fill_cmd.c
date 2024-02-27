@@ -24,7 +24,7 @@ char	*get_envpath(char *cmd, char **envp)
 		c.i++;
 	paths = ft_split(ft_strnstr(envp[c.i], "=", 7) + 1, ':');
 	if (!paths)
-		perror_exit("env variables");
+		perror_exit("env variables", 128);
 	while (paths[c.j] && paths[c.j + 1] && access(ret, F_OK))
 	{
 		if (c.j)
@@ -34,7 +34,7 @@ char	*get_envpath(char *cmd, char **envp)
 		ret = ft_strjoin_f1(tmp, cmd);
 	}
 	if (!paths[c.j])
-		perror_exit(paths[c.j]);
+		perror_exit(paths[c.j], 127);
 	return (ft_dfree((void **)paths), ret);
 }
 
@@ -45,7 +45,7 @@ char	*get_path(char *cmd, char **envp)
 	else if (!*envp)
 	{
 		if (access(cmd, F_OK) == -1)
-			perror_exit(cmd);
+			perror_exit(cmd, 127);
 		return (ft_strdup(cmd));
 	}
 	else
@@ -61,7 +61,7 @@ t_exec	fill_cmd(char *cmd, char **envp)
 	if (!ret.args)
 	{
 		ft_dfree((void *)ret.args);
-		perror_exit(cmd);
+		perror_exit(cmd, 127);
 	}
 	ret.envp = envp;
 	if (access(ret.args[0], X_OK))

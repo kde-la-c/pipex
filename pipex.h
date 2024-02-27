@@ -18,6 +18,9 @@
 # include <sys/types.h>
 # include <sys/wait.h>
 
+# define READ	0
+# define WRITE	1
+
 typedef struct s_exec
 {
 	char	*path;
@@ -25,12 +28,27 @@ typedef struct s_exec
 	char	**envp;
 }	t_exec;
 
+typedef struct s_core
+{
+	char	**commands;
+	char	**envp;
+	char	*infile;
+	char	*outfile;
+	int		nbcommands;
+	int		**fds;
+	int		*pids;
+}	t_core;
+
 // input
 void	read_args(int argc, char **argv);
 
 // output
-int		print_error(char *err);
-int		perror_exit(char *err);
+int		print_error(char *err, int status);
+int		perror_exit(char *err, int status);
+
+// initialize core
+int		**init_pipes(int nbpipes);
+int		init_core(t_core *core, int argc, char **argv, char **envp);
 
 // interpret commands
 t_exec	fill_cmd(char *cmd, char **envp);
@@ -40,8 +58,6 @@ void	close_both(int *fds);
 void	redir_fd(char *srcpath, int srcfd, int create, int dest);
 
 // run commands
-int		run_cmd_first(char *infile, char *command, char **envp, int *fds);
-int		run_cmd_last(char *outfile, char *command, char **envp, int *fds);
-int		run_cmd_middle(char *command, char **envp, int *fdsin, int *fdsout);
+int		command_runner(t_core *core);
 
 #endif

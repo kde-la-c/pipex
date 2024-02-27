@@ -15,9 +15,9 @@
 void	close_both(int *fds)
 {
 	if (close(fds[0]))
-		perror_exit("close read pipe");
+		perror_exit("close read pipe", EXIT_FAILURE);
 	if (close(fds[1]))
-		perror_exit("close write pipe");
+		perror_exit("close write pipe", EXIT_FAILURE);
 }
 
 void	redir_fd(char *srcpath, int srcfd, int create, int dest)
@@ -27,8 +27,8 @@ void	redir_fd(char *srcpath, int srcfd, int create, int dest)
 	else if (srcpath && !create)
 		srcfd = open(srcpath, O_RDONLY);
 	if (srcfd == -1)
-		perror_exit(srcpath);
+		return ;
 	if (dup2(srcfd, dest) == -1)
-		perror_exit("dup");
+		perror_exit("dup", EXIT_FAILURE);
 	close(srcfd);
 }

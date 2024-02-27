@@ -12,48 +12,23 @@
 
 #include "pipex.h"
 
-int	**init_pipes(int nbpipes)
-{
-	int	i;
-	int	**fds;
-
-	i = 0;
-	fds = (int **)malloc(sizeof(int *) * nbpipes);
-	if (!fds)
-		perror_exit("file descriptor");
-	while (i < nbpipes)
-	{
-		fds[i] = (int *)malloc(sizeof(int) * 2);
-		if (!fds[i])
-		{
-			ft_dfree((void **)fds);
-			perror_exit("file descriptors");
-		}
-		if (pipe(fds[i]) == -1)
-		{
-			ft_dfree((void **)fds);
-			perror_exit("pipe creation");
-		}
-		i++;
-	}
-	return (fds);
-}
-
 int	main(int argc, char **argv, char **envp)
 {
-	int	i;
-	int	**fds;
+	int		i;
+	int		j;
+	t_core	*core;
 
-	i = -1;
-	fds = init_pipes(argc - 4);
+	i = 0;
+	j = 0;
 	read_args(argc, argv);
-	if (run_cmd_first(argv[1], argv[2], envp, fds[0]))
-		perror_exit(argv[2]);
-	while (++i < argc - 5)
-		if (run_cmd_middle(argv[i + 3], envp, fds[i], fds[i + 1]))
-			perror_exit(argv[i + 3]);
-	if (run_cmd_last(argv[argc - 1], argv[argc - 2], envp, fds[argc - 5]))
-		perror_exit(argv[5]);
-	ft_dnfree((void **)fds, argc - 4);
-	return (0);
+	core = (t_core *)malloc(sizeof(t_core));
+	if (!core)
+		perror_exit("structure", EXIT_FAILURE);
+	init_core(core, argc, argv, envp);
+	command_runner(core);
+	while (i < core->nbcommands && core->pids[i] == 0)
+	{
+		waitpid(core->pids[i], NULL, 0);
+		i++;
+	}
 }

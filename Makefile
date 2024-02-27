@@ -17,7 +17,8 @@ SRC			= pipex.c\
 			output.c\
 			run_cmd.c\
 			fill_cmd.c\
-			handle_fds.c
+			handle_fds.c\
+			init_core.c
 # BSRC		= pipex_bonus.c\
 			input_bonus.c\
 			output_bonus.c\

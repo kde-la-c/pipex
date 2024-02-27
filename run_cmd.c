@@ -12,75 +12,83 @@
 
 #include "pipex.h"
 
-int	run_cmd_first(char *infile, char *command, char **envp, int *fds)
+static int	run_cmd_first(t_core *core, int cmd_id)
 {
-	int		pid;
 	t_exec	cmd;
 
-	cmd = fill_cmd(command, envp);
-	pid = fork();
-	if (!pid)
+	if (!core->pids[cmd_id])
 	{
-		close(fds[0]);
-		redir_fd(infile, -1, 0, STDIN_FILENO);
-		redir_fd(NULL, fds[1], 0, STDOUT_FILENO);
-		close(fds[1]);
+		cmd = fill_cmd(core->commands[cmd_id], core->envp);
+		close(core->fds[cmd_id][READ]);
+		redir_fd(core->infile, -1, 0, STDIN_FILENO);
+		redir_fd(NULL, core->fds[cmd_id][WRITE], 0, STDOUT_FILENO);
+		close(core->fds[cmd_id][WRITE]);
 		if (execve(cmd.path, cmd.args, cmd.envp) == -1)
 			return (ft_dfree((void **)cmd.args), free(cmd.path), 1);
 	}
-	else
-	{
-		waitpid(pid, NULL, 0);
-	}
-	return (ft_dfree((void **)cmd.args), free(cmd.path), 0);
+	return (0);
 }
 
-int	run_cmd_middle(char *command, char **envp, int *fdsin, int *fdsout)
+static int	run_cmd_middle(t_core *core, int cmd_id)
 {
-	int		pid;
 	t_exec	cmd;
 
-	cmd = fill_cmd(command, envp);
-	pid = fork();
-	if (!pid)
+	if (!core->pids[cmd_id])
 	{
-		close(fdsin[1]);
-		close(fdsout[0]);
-		redir_fd(NULL, fdsin[0], 0, STDIN_FILENO);
-		redir_fd(NULL, fdsout[1], 0, STDOUT_FILENO);
-		close(fdsin[0]);
-		close(fdsout[1]);
+		cmd = fill_cmd(core->commands[cmd_id], core->envp);
+		close(core->fds[cmd_id - 1][WRITE]);
+		close(core->fds[cmd_id][READ]);
+		redir_fd(NULL, core->fds[cmd_id - 1][READ], 0, STDIN_FILENO);
+		redir_fd(NULL, core->fds[cmd_id][WRITE], 0, STDOUT_FILENO);
+		close(core->fds[cmd_id - 1][READ]);
+		close(core->fds[cmd_id][WRITE]);
 		if (execve(cmd.path, cmd.args, cmd.envp) == -1)
 			return (ft_dfree((void **)cmd.args), free(cmd.path), 1);
 	}
 	else
 	{
-		close_both(fdsin);
-		waitpid(pid, NULL, 0);
+		close_both(core->fds[cmd_id - 1]);
 	}
-	return (ft_dfree((void **)cmd.args), free(cmd.path), 0);
+	return (0);
 }
 
-int	run_cmd_last(char *outfile, char *command, char **envp, int *fds)
+static int	run_cmd_last(t_core *core, int cmd_id)
 {
-	int		pid;
 	t_exec	cmd;
 
-	cmd = fill_cmd(command, envp);
-	pid = fork();
-	if (!pid)
+	if (!core->pids[cmd_id])
 	{
-		close(fds[1]);
-		redir_fd(NULL, fds[0], 0, STDIN_FILENO);
-		redir_fd(outfile, -1, 1, STDOUT_FILENO);
-		close(fds[0]);
+		cmd = fill_cmd(core->commands[cmd_id], core->envp);
+		close(core->fds[cmd_id - 1][WRITE]);
+		redir_fd(NULL, core->fds[cmd_id - 1][READ], 0, STDIN_FILENO);
+		redir_fd(core->outfile, -1, 1, STDOUT_FILENO);
+		close(core->fds[cmd_id - 1][READ]);
 		if (execve(cmd.path, cmd.args, cmd.envp) == -1)
 			return (ft_dfree((void **)cmd.args), free(cmd.path), 1);
 	}
 	else
 	{
-		close_both(fds);
-		waitpid(pid, NULL, 0);
+		close_both(core->fds[cmd_id - 1]);
 	}
-	return (ft_dfree((void **)cmd.args), free(cmd.path), 0);
+	return (0);
+}
+
+int	command_runner(t_core *core)
+{
+	int	i;
+
+	i = 0;
+	while (i < core->nbcommands)
+	{
+		core->pids[i] = fork();
+		if (i == 0 && core->pids[i] == 0)
+			return (run_cmd_first(core, i));
+		else if (i == core->nbcommands - 1 && core->pids[i] == 0)
+			return (run_cmd_last(core, i));
+		else if (core->pids[i] == 0)
+			return (run_cmd_middle(core, i));
+		else
+			i++;
+	}
+	return (EXIT_SUCCESS);
 }
