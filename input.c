@@ -12,10 +12,10 @@
 
 #include "pipex.h"
 
-void	read_args(int argc, char **argv)
+void	read_args(t_args args, int ishdoc)
 {
-	if (argc < 5)
+	if (args.argc < 5 + ishdoc)
 		print_error("invalid arguments", 1);
-	if (access(argv[1], R_OK))
-		perror(argv[1]);
+	if (ft_strncmp("here_doc", args.argv[1], 9) && access(args.argv[1], R_OK))
+		perror(args.argv[1]);
 }

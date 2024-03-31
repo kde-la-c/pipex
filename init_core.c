@@ -39,25 +39,30 @@ int	**init_pipes(int nbpipes)
 	return (fds);
 }
 
-void	init_core(t_core *core, int argc, char **argv, char **envp)
+void	init_core(t_core *core, t_args args, int ishdoc)
 {
 	int	i;
 
 	i = -1;
-	core->nbcommands = argc - 3;
-	if (!access(argv[1], R_OK))
-		core->infile = argv[1];
+	core->nbcommands = (args.argc - 3) - ishdoc;
+	if (!ishdoc && !access(args.argv[1], R_OK))
+		core->infile = args.argv[1];
 	else
 		core->infile = NULL;
-	core->outfile = argv[argc - 1];
+	if (ishdoc)
+		core->delimiter = args.argv[2];
+	else
+		core->delimiter = NULL;
+	core->outfile = args.argv[args.argc - 1];
 	core->fds = init_pipes(core->nbcommands - 1);
-	core->envp = envp;
-	core->pids = (int *)malloc(sizeof(int) * core->nbcommands);
+	core->envp = args.envp;
+	core->pids = (int *)ft_calloc(core->nbcommands, sizeof(int));
 	if (!core->pids)
 		perror_exit("pids", EXIT_FAILURE);
-	core->commands = (char **)malloc(sizeof(char *) * (argc - 3) + 1);
+	core->commands = (char **)ft_calloc((core->nbcommands) + 1, sizeof(char *));
 	if (!core->commands)
 		perror_exit("commands", EXIT_FAILURE);
-	while (++i < argc - 3)
-		core->commands[i] = argv[i + 2];
+	while (++i < core->nbcommands)
+		core->commands[i] = args.argv[i + 2 + ishdoc];
+	core->commands[i] = NULL;
 }

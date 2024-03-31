@@ -33,6 +33,7 @@ typedef struct s_core
 	char	**commands;
 	char	**envp;
 	char	*infile;
+	char	*delimiter;
 	char	*outfile;
 	int		nbcommands;
 	int		**fds;
@@ -40,7 +41,7 @@ typedef struct s_core
 }	t_core;
 
 // input
-void	read_args(int argc, char **argv);
+void	read_args(t_args args, int ishdoc);
 
 // output
 int		print_error(char *err, int status);
@@ -48,7 +49,7 @@ int		perror_exit(char *err, int status);
 
 // initialize core
 int		**init_pipes(int nbpipes);
-void	init_core(t_core *core, int argc, char **argv, char **envp);
+void	init_core(t_core *core, t_args args, int ishdoc);
 
 // interpret commands
 t_exec	fill_cmd(char *cmd, char **envp);
