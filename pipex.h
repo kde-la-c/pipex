@@ -43,19 +43,20 @@ typedef struct s_core
 void	read_args(int argc, char **argv);
 
 // output
+void	free_struct(t_core *core);
 int		print_error(char *err, int status);
-int		perror_exit(char *err, int status);
+int		perror_exit(t_core *core, char *err, int status);
 
 // initialize core
-int		**init_pipes(int nbpipes);
+int		**init_pipes(t_core *core);
 void	init_core(t_core *core, int argc, char **argv, char **envp);
 
 // interpret commands
-t_exec	fill_cmd(char *cmd, char **envp);
+t_exec	fill_cmd(t_core *core, int cmd_id);
 
 // handle file descriptors and pipes
-void	close_both(int *fds);
-void	redir_fd(char *srcpath, int srcfd, int create, int dest);
+int		close_both(int *fds);
+int		redir_fd(char *srcpath, int srcfd, int create, int dest);
 
 // run commands
 int		command_runner(t_core *core);

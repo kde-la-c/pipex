@@ -12,27 +12,27 @@
 
 #include "pipex.h"
 
-int	**init_pipes(int nbpipes)
+int	**init_pipes(t_core *core)
 {
 	int	i;
 	int	**fds;
 
 	i = 0;
-	fds = (int **)malloc(sizeof(int *) * nbpipes);
+	fds = (int **)malloc(sizeof(int *) * core->nbcommands);
 	if (!fds)
-		perror_exit("file descriptor", EXIT_FAILURE);
-	while (i < nbpipes)
+		perror_exit(core, "file descriptor", EXIT_FAILURE);
+	while (i < core->nbcommands)
 	{
 		fds[i] = (int *)malloc(sizeof(int) * 2);
 		if (!fds[i])
 		{
 			ft_dfree((void **)fds);
-			perror_exit("file descriptors", EXIT_FAILURE);
+			perror_exit(core, "file descriptors", EXIT_FAILURE);
 		}
 		if (pipe(fds[i]) == -1)
 		{
 			ft_dfree((void **)fds);
-			perror_exit("pipe creation", EXIT_FAILURE);
+			perror_exit(core, "pipe creation", EXIT_FAILURE);
 		}
 		i++;
 	}
@@ -50,14 +50,14 @@ void	init_core(t_core *core, int argc, char **argv, char **envp)
 	else
 		core->infile = NULL;
 	core->outfile = argv[argc - 1];
-	core->fds = init_pipes(core->nbcommands - 1);
+	core->fds = init_pipes(core);
 	core->envp = envp;
 	core->pids = (int *)malloc(sizeof(int) * core->nbcommands);
 	if (!core->pids)
-		perror_exit("pids", EXIT_FAILURE);
+		perror_exit(core, "pids", EXIT_FAILURE);
 	core->commands = (char **)malloc(sizeof(char *) * (argc - 3) + 1);
 	if (!core->commands)
-		perror_exit("commands", EXIT_FAILURE);
+		perror_exit(core, "commands", EXIT_FAILURE);
 	while (++i < argc - 3)
 		core->commands[i] = argv[i + 2];
 }

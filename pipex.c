@@ -22,15 +22,15 @@ int	main(int argc, char **argv, char **envp)
 	read_args(argc, argv);
 	core = (t_core *)malloc(sizeof(t_core));
 	if (!core)
-		perror_exit("structure", EXIT_FAILURE);
+		perror_exit(core, "structure", EXIT_FAILURE);
 	init_core(core, argc, argv, envp);
 	j = command_runner(core);
 	if (j)
-		perror_exit("cmd", j);
+		perror_exit(core, "cmd", j);
 	while (i < core->nbcommands && core->pids[i] == 0)
 	{
 		waitpid(core->pids[i], NULL, 0);
 		i++;
 	}
-	return (EXIT_SUCCESS);
+	return (free_struct(core), EXIT_SUCCESS);
 }

@@ -12,23 +12,31 @@
 
 #include "pipex.h"
 
-void	close_both(int *fds)
+int	close_both(int *fds)
 {
 	if (close(fds[0]))
-		perror_exit("close read pipe", EXIT_FAILURE);
+	{
+		print_error("close read pipe", EXIT_FAILURE);
+		return (EXIT_FAILURE);
+	}
 	if (close(fds[1]))
-		perror_exit("close write pipe", EXIT_FAILURE);
+	{
+		print_error("close write pipe", EXIT_FAILURE);
+		return (EXIT_FAILURE);
+	}
+	return (EXIT_SUCCESS);
 }
 
-void	redir_fd(char *srcpath, int srcfd, int create, int dest)
+int	redir_fd(char *srcpath, int srcfd, int create, int dest)
 {
 	if (srcpath && create)
 		srcfd = open(srcpath, O_RDWR | O_CREAT | O_TRUNC, 0644);
 	else if (srcpath && !create)
 		srcfd = open(srcpath, O_RDONLY);
 	if (srcfd == -1)
-		return ;
+		return (EXIT_SUCCESS);
 	if (dup2(srcfd, dest) == -1)
-		perror_exit("dup", EXIT_FAILURE);
+		return (EXIT_FAILURE);
 	close(srcfd);
+	return (EXIT_SUCCESS);
 }

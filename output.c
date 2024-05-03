@@ -12,6 +12,27 @@
 
 #include "pipex.h"
 
+void	free_struct(t_core *core)
+{
+	int	i;
+
+	i = -1;
+	if (core)
+	{
+		if (core->fds)
+		{
+			while (++i < core->nbcommands)
+				free(core->fds[i]);
+			free(core->fds);
+		}
+		if (core->pids)
+			free(core->pids);
+		if (core->commands)
+			free(core->commands);
+		free(core);
+	}
+}
+
 int	print_error(char *err, int status)
 {
 	write(2, &err[0], ft_strlen(err));
@@ -19,8 +40,9 @@ int	print_error(char *err, int status)
 	exit(status);
 }
 
-int	perror_exit(char *err, int status)
+int	perror_exit(t_core *core, char *err, int status)
 {
+	free_struct(core);
 	perror(err);
 	exit(status);
 }

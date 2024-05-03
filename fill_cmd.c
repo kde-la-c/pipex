@@ -12,7 +12,7 @@
 
 #include "pipex.h"
 
-char	*get_envpath(char *cmd, char **envp)
+char	*get_envpath(t_core *core, char *cmd, char **envp)
 {
 	t_count	c;
 	char	*ret;
@@ -24,7 +24,7 @@ char	*get_envpath(char *cmd, char **envp)
 		c.i++;
 	paths = ft_split(ft_strnstr(envp[c.i], "=", 7) + 1, ':');
 	if (!paths)
-		perror_exit("env variables", 128);
+		perror_exit(core, "env variables", 128);
 	while (paths[c.j] && paths[c.j + 1] && access(ret, F_OK))
 	{
 		if (c.j)
@@ -34,38 +34,38 @@ char	*get_envpath(char *cmd, char **envp)
 		ret = ft_strjoin_f1(tmp, cmd);
 	}
 	if (!paths[c.j])
-		perror_exit(paths[c.j], 127);
+		perror_exit(core, paths[c.j], 127);
 	return (ft_dfree((void **)paths), ret);
 }
 
-char	*get_path(char *cmd, char **envp)
+static char	*get_path(t_core *core, char *cmd, char **envp)
 {
 	if (!cmd)
 		return (NULL);
 	else if (!*envp)
 	{
 		if (access(cmd, F_OK) == -1)
-			perror_exit(cmd, 127);
+			perror_exit(core, cmd, 127);
 		return (ft_strdup(cmd));
 	}
 	else
-		return (get_envpath(cmd, envp));
+		return (get_envpath(core, cmd, envp));
 }
 
-t_exec	fill_cmd(char *cmd, char **envp)
+t_exec	fill_cmd(t_core *core, int cmd_id)
 {
 	t_exec	ret;
 	char	*path;
 
-	ret.args = ft_split(cmd, ' ');
+	ret.args = ft_split(core->commands[cmd_id], ' ');
 	if (!ret.args)
 	{
 		ft_dfree((void *)ret.args);
-		perror_exit(cmd, 127);
+		perror_exit(core, core->commands[cmd_id], 127);
 	}
-	ret.envp = envp;
+	ret.envp = core->envp;
 	if (access(ret.args[0], X_OK))
-		path = get_path(ret.args[0], envp);
+		path = get_path(core, ret.args[0], core->envp);
 	else
 		path = ft_strdup(ret.args[0]);
 	if (!path)

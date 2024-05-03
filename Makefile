@@ -23,6 +23,8 @@ OBJS		= $(SRC:%.c=%.o)
 INCLUDE		= pipex.h
 CC			= gcc
 CFLAGS		= -Wall -Wextra -Werror
+# CFLAGS		+= -fsanitize=address -g3
+# CFLAGS		+= -fsanitize=leak -g3
 RM			= rm
 RFLAGS		= -rf
 
@@ -38,12 +40,12 @@ $(NAME):	$(OBJS) $(INCLUDE) $(LIBNAME)
 			@echo "\033[0;32m--- $(NAME) compiled successfully! ---\033[0m"
 
 l:			$(OBJS) $(INCLUDE) $(LIBNAME)
-			$(CC) $(CFLAGS) -fsanitize=leak -g3 $(OBJS) -o $(NAME) $(LIBNAME)
+			$(CC) $(CFLAGS) $(OBJS) -o $(NAME) $(LIBNAME)
 			$(RM) $(RFLAGS) $(OBJS)
 			@echo "\033[0;32m--- $(NAME) compiled successfully! ---\033[0m"
 
 m:			$(OBJS) $(INCLUDE) $(LIBNAME)
-			$(CC) $(CFLAGS) -fsanitize=address -g3 $(OBJS) -o $(NAME) $(LIBNAME)
+			$(CC) $(CFLAGS) $(OBJS) -o $(NAME) $(LIBNAME)
 			$(RM) $(RFLAGS) $(OBJS)
 			@echo "\033[0;32m--- $(NAME) compiled successfully! ---\033[0m"
 
