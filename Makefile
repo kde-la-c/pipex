@@ -39,16 +39,6 @@ $(NAME):	$(OBJS) $(INCLUDE) $(LIBNAME)
 	@echo "\033[0;31m--- RELINK ---\033[0m"
 			@echo "\033[0;32m--- $(NAME) compiled successfully! ---\033[0m"
 
-l:			$(OBJS) $(INCLUDE) $(LIBNAME)
-			$(CC) $(CFLAGS) $(OBJS) -o $(NAME) $(LIBNAME)
-			$(RM) $(RFLAGS) $(OBJS)
-			@echo "\033[0;32m--- $(NAME) compiled successfully! ---\033[0m"
-
-m:			$(OBJS) $(INCLUDE) $(LIBNAME)
-			$(CC) $(CFLAGS) $(OBJS) -o $(NAME) $(LIBNAME)
-			$(RM) $(RFLAGS) $(OBJS)
-			@echo "\033[0;32m--- $(NAME) compiled successfully! ---\033[0m"
-
 debug:		$(NAME_DBG)
 
 $(NAME_DBG): $(LIBNAME) $(SRC)
@@ -69,4 +59,4 @@ fclean:		clean
 
 re:			fclean all
 
-.PHONY:		all clean fclean re debug m l
+.PHONY:		all clean fclean re debug

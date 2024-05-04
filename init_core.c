@@ -49,7 +49,7 @@ void	init_core(t_core *core, int argc, char **argv, char **envp)
 		core->infile = argv[1];
 	else
 		core->infile = NULL;
-	if (access(argv[argc - 1], W_OK))
+	if (!access(argv[argc - 1], F_OK) && access(argv[argc - 1], W_OK))
 		perror_exit(core, argv[argc - 1], EXIT_FAILURE);
 	core->outfile = argv[argc - 1];
 	core->fds = init_pipes(core);
