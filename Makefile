@@ -23,7 +23,7 @@ OBJS		= $(SRC:%.c=%.o)
 INCLUDE		= pipex.h
 CC			= gcc
 CFLAGS		= -Wall -Wextra -Werror
-# CFLAGS		+= -fsanitize=address -g3
+CFLAGS		+= -fsanitize=address -g3
 # CFLAGS		+= -fsanitize=leak -g3
 RM			= rm
 RFLAGS		= -rf

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   handle_fds.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: kde-la-c <kde-la-c@student.42madrid>       +#+  +:+       +#+        */
+/*   By: kde-la-c <kde-la-c@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/22 23:02:34 by kde-la-c          #+#    #+#             */
-/*   Updated: 2024/02/22 23:02:51 by kde-la-c         ###   ########.fr       */
+/*   Updated: 2024/08/24 15:02:13 by kde-la-c         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,6 +27,10 @@ int	close_both(int *fds)
 	return (EXIT_SUCCESS);
 }
 
+/**
+ * The function `redir_fd` inputs `src` content by `dest` fd
+ * `src` will behave as `dest` would have
+ */
 int	redir_fd(char *srcpath, int srcfd, int create, int dest)
 {
 	if (srcpath && create)
